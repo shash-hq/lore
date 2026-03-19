@@ -8,14 +8,21 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\EntrepreneurController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/welcome', function () {
+    if (auth()->check()) {
+        return redirect()->route('home');
+    }
+    return view('welcome');
+})->name('welcome');
+
 Route::get('/', [HomeController::class , 'index'])->name('home');
 Route::get('/search', [SearchController::class , 'index'])->name('search');
 Route::get('/videos/{slug}', [VideoController::class , 'show'])->name('videos.show');
 Route::get('/entrepreneurs/{username}', [EntrepreneurController::class , 'show'])->name('entrepreneurs.show');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class , 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class , 'edit'])->name('profile.edit');
