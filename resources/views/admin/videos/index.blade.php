@@ -34,7 +34,7 @@
             <tr style="border-bottom:1px solid #F2EFE9;">
                 <td style="padding:12px 16px;">
                     <div style="display:flex; align-items:center; gap:12px;">
-                        <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/default.jpg"
+                        <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/mqdefault.jpg" onerror="this.src='https://img.youtube.com/vi/{{ $video->youtube_id }}/0.jpg'"
                              style="width:60px; height:45px; object-fit:cover; border-radius:6px;" alt="">
                         <span style="font-family:'DM Sans',sans-serif; font-size:13px; color:#1A1814; max-width:280px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
                             {{ $video->title }}

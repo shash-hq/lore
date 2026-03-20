@@ -58,7 +58,7 @@
                     </form>
 
                     <a href="{{ route('videos.show', $video->slug) }}" style="text-decoration:none;">
-                        <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/hqdefault.jpg"
+                        <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/mqdefault.jpg"
                             style="width:100%; display:block;" alt="{{ $video->title }}">
                         <div style="padding:14px;">
                             <h3
