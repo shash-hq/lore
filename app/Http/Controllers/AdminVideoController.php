@@ -26,17 +26,22 @@ class AdminVideoController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'youtube_id' => 'required|string|max:50',
+            'youtube_id' => 'required|string', // Removed max:50 to safely accept full URLs before processing
             'description' => 'required|string',
             'is_published' => 'boolean',
         ]);
 
+        // Clean and extract the exact 11-character YouTube ID
+        $youtubeInput = $validated['youtube_id'];
+        preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=|shorts/)|youtu\.be/)([^"&?/\s]{11})%i', $youtubeInput, $match);
+        $cleanYoutubeId = $match[1] ?? $youtubeInput;
+
         $video = Video::create([
             'user_id' => auth()->id(),
             'title' => $validated['title'],
-            'youtube_id' => $validated['youtube_id'],
+            'youtube_id' => $cleanYoutubeId, // Saving the cleaned ID
             'description' => $validated['description'],
-            'thumbnail_url' => 'https://img.youtube.com/vi/' . $validated['youtube_id'] . '/hqdefault.jpg',
+            'thumbnail_url' => 'https://img.youtube.com/vi/' . $cleanYoutubeId . '/hqdefault.jpg', // URL will now be perfectly formatted
             'is_published' => $request->boolean('is_published'),
             'is_featured' => false,
         ]);
