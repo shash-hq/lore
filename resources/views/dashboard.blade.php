@@ -97,7 +97,7 @@
                     <div style="background:white; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(26,24,20,0.07); transition:transform 0.25s ease;"
                         onmouseover="this.style.transform='translateY(-3px)'"
                         onmouseout="this.style.transform='translateY(0)'">
-                        <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/hqdefault.jpg"
+                        <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/maxresdefault.jpg"
                             style="width:100%; display:block;" alt="{{ $video->title }}">
                         <div style="padding:14px;">
                             <h3

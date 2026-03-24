@@ -53,9 +53,10 @@
             <div class="break-inside-avoid w-full bg-white rounded-[12px] overflow-hidden shadow-[0_2px_12px_rgba(26,24,20,0.07)] hover:-translate-y-[3px] transition-transform duration-[250ms] ease-in-out group cursor-pointer"
                 onclick="window.location.href='{{ route('videos.show', $video->slug) }}'">
                 <div class="relative w-full aspect-video bg-gray-100 overflow-hidden">
-                    <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/mqdefault.jpg" onerror="this.src='https://img.youtube.com/vi/{{ $video->youtube_id }}/0.jpg'"
-                        alt="{{ $video->title }}"
-                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                    <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/maxresdefault.jpg"
+     onerror="this.onerror=null; this.src='https://img.youtube.com/vi/{{ $video->youtube_id }}/hqdefault.jpg';"
+     alt="{{ $video->title }}"
+     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
                 </div>
                 <div class="p-[14px]">
                     <h3

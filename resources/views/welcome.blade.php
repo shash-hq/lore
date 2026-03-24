@@ -44,8 +44,10 @@
                     transform:{{ $i === 0 ? 'rotate(-2deg)' : ($i === 1 ? 'rotate(1.5deg)' : ($i === 2 ? 'rotate(1deg)' : 'rotate(-1.5deg)')) }};
                     transition:transform 0.3s ease;" onmouseover="this.style.transform='rotate(0deg) scale(1.03)'"
                         onmouseout="this.style.transform='{{ $i === 0 ? 'rotate(-2deg)' : ($i === 1 ? 'rotate(1.5deg)' : ($i === 2 ? 'rotate(1deg)' : 'rotate(-1.5deg)')) }}'">
-                        <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/mqdefault.jpg" onerror="this.src='https://img.youtube.com/vi/{{ $video->youtube_id }}/0.jpg'"
-                            style="width:100%; display:block;" alt="{{ $video->title }}">
+                        <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/maxresdefault.jpg"
+     onerror="this.onerror=null; this.src='https://img.youtube.com/vi/{{ $video->youtube_id }}/hqdefault.jpg';"
+     style="width:100%; display:block;"
+     alt="{{ $video->title }}">
                     </div>
                     @endforeach
                 </div>

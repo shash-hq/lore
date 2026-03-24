@@ -41,7 +41,7 @@ class AdminVideoController extends Controller
             'title' => $validated['title'],
             'youtube_id' => $cleanYoutubeId, // Saving the cleaned ID
             'description' => $validated['description'],
-            'thumbnail_url' => 'https://img.youtube.com/vi/' . $cleanYoutubeId . '/hqdefault.jpg', // URL will now be perfectly formatted
+            'thumbnail_url' => 'https://img.youtube.com/vi/' . $cleanYoutubeId . '/maxresdefault.jpg', // URL will now be perfectly formatted
             'is_published' => $request->boolean('is_published'),
             'is_featured' => false,
         ]);
