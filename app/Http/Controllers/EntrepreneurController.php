@@ -20,7 +20,8 @@ class EntrepreneurController extends Controller
                        ->get();
 
         $totalViews = $videos->sum('views');
+        $heroVideo = $videos->first();
 
-        return view('entrepreneurs.show', compact('user', 'videos', 'totalViews'));
+        return view('entrepreneurs.show', compact('user', 'videos', 'totalViews', 'heroVideo'));
     }
 }

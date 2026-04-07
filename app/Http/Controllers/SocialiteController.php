@@ -13,11 +13,19 @@ class SocialiteController extends Controller
 {
     public function redirectToGoogle()
     {
+        if (! $this->googleAuthEnabled()) {
+            return redirect('/login')->withErrors(['email' => 'Google sign-in is not configured yet.']);
+        }
+
         return Socialite::driver('google')->redirect();
     }
 
     public function handleGoogleCallback()
     {
+        if (! $this->googleAuthEnabled()) {
+            return redirect('/login')->withErrors(['email' => 'Google sign-in is not configured yet.']);
+        }
+
         try {
             $googleUser = Socialite::driver('google')->user();
 
@@ -38,5 +46,12 @@ class SocialiteController extends Controller
         } catch (\Exception $e) {
             return redirect('/login')->withErrors(['email' => 'Google authorization failed']);
         }
+    }
+
+    protected function googleAuthEnabled(): bool
+    {
+        return filled(config('services.google.client_id'))
+            && filled(config('services.google.client_secret'))
+            && filled(config('services.google.redirect'));
     }
 }

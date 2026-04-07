@@ -48,6 +48,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/videos', [App\Http\Controllers\AdminVideoController::class , 'index'])->name('videos.index');
     Route::get('/videos/create', [App\Http\Controllers\AdminVideoController::class , 'create'])->name('videos.create');
     Route::post('/videos', [App\Http\Controllers\AdminVideoController::class , 'store'])->name('videos.store');
+    Route::get('/videos/{video}/edit', [App\Http\Controllers\AdminVideoController::class , 'edit'])->name('videos.edit');
+    Route::put('/videos/{video}', [App\Http\Controllers\AdminVideoController::class , 'update'])->name('videos.update');
     Route::patch('/videos/{video}/toggle-published', [App\Http\Controllers\AdminVideoController::class , 'togglePublished'])->name('videos.toggle-published');
     Route::patch('/videos/{video}/toggle-featured', [App\Http\Controllers\AdminVideoController::class , 'toggleFeatured'])->name('videos.toggle-featured');
     Route::delete('/videos/{video}', [App\Http\Controllers\AdminVideoController::class , 'destroy'])->name('videos.destroy');

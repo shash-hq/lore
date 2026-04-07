@@ -12,7 +12,7 @@ class HomeController extends Controller
     {
         $featuredVideo = Video::where('is_featured', true)
                               ->where('is_published', true)
-                              ->with('user')
+                              ->with(['user', 'categories'])
                               ->first();
 
         $query = Video::with(['user', 'categories', 'tags'])
@@ -25,8 +25,7 @@ class HomeController extends Controller
             });
         }
 
-        // We fetch 20 published videos. If there's no pagination requirement, limit 20.
-        $videos = $query->latest()->limit(20)->get();
+        $videos = $query->latest()->paginate(15)->withQueryString();
 
         $categories = Category::orderBy('name')->get();
 

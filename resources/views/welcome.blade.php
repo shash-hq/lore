@@ -39,17 +39,22 @@
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; position:relative;">
                     @php $collage = App\Models\Video::where('is_published', true)->inRandomOrder()->limit(4)->get();
                     @endphp
-                    @foreach($collage as $i => $video)
-                    <div style="border-radius:12px; overflow:hidden; box-shadow:0 8px 30px rgba(26,24,20,0.12);
-                    transform:{{ $i === 0 ? 'rotate(-2deg)' : ($i === 1 ? 'rotate(1.5deg)' : ($i === 2 ? 'rotate(1deg)' : 'rotate(-1.5deg)')) }};
-                    transition:transform 0.3s ease;" onmouseover="this.style.transform='rotate(0deg) scale(1.03)'"
-                        onmouseout="this.style.transform='{{ $i === 0 ? 'rotate(-2deg)' : ($i === 1 ? 'rotate(1.5deg)' : ($i === 2 ? 'rotate(1deg)' : 'rotate(-1.5deg)')) }}'">
-                        <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/maxresdefault.jpg"
-     onerror="this.onerror=null; this.src='https://img.youtube.com/vi/{{ $video->youtube_id }}/hqdefault.jpg';"
-     style="width:100%; display:block;"
-     alt="{{ $video->title }}">
-                    </div>
-                    @endforeach
+                    @forelse($collage as $i => $video)
+                        <div style="border-radius:12px; overflow:hidden; box-shadow:0 8px 30px rgba(26,24,20,0.12);
+                        transform:{{ $i === 0 ? 'rotate(-2deg)' : ($i === 1 ? 'rotate(1.5deg)' : ($i === 2 ? 'rotate(1deg)' : 'rotate(-1.5deg)')) }};
+                        transition:transform 0.3s ease;" onmouseover="this.style.transform='rotate(0deg) scale(1.03)'"
+                            onmouseout="this.style.transform='{{ $i === 0 ? 'rotate(-2deg)' : ($i === 1 ? 'rotate(1.5deg)' : ($i === 2 ? 'rotate(1deg)' : 'rotate(-1.5deg)')) }}'">
+                            <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/maxresdefault.jpg"
+                                onerror="this.onerror=null; this.src='https://img.youtube.com/vi/{{ $video->youtube_id }}/hqdefault.jpg';"
+                                style="width:100%; display:block;"
+                                alt="{{ $video->title }}">
+                        </div>
+                    @empty
+                        <div style="grid-column:1 / -1; border:1px dashed #D4C4B8; border-radius:16px; background:white; padding:36px; text-align:center;">
+                            <div style="font-family:'Playfair Display',serif; font-size:26px; color:#1A1814; margin-bottom:8px;">Your founder gallery starts here</div>
+                            <div style="font-family:'DM Sans',sans-serif; font-size:15px; color:#6B6560; line-height:1.6;">Publish a few videos from the admin panel and this landing page will instantly fill with real founder stories.</div>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </section>
@@ -94,18 +99,24 @@
                     Explore by Topic
                 </h2>
                 <div style="display:flex; flex-wrap:wrap; gap:16px; justify-content:center;">
-                    @foreach(App\Models\Category::withCount('videos')->get() as $cat)
-                    <a href="{{ route('home') }}?category={{ $cat->slug }}"
-                        style="background:white; border:1px solid #E5E0D8; border-radius:10px; padding:20px 28px; text-decoration:none; text-align:center; min-width:140px; transition:all 0.2s;"
-                        onmouseover="this.style.borderColor='#D4542A'; this.style.transform='translateY(-2px)'"
-                        onmouseout="this.style.borderColor='#E5E0D8'; this.style.transform='translateY(0)'">
-                        <div
-                            style="font-family:'Playfair Display',serif; font-size:16px; color:#1A1814; margin-bottom:4px;">
-                            {{ $cat->name }}</div>
-                        <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#A09890;">{{
-                            $cat->videos_count }} videos</div>
-                    </a>
-                    @endforeach
+                    @forelse(App\Models\Category::withCount('videos')->get() as $cat)
+                        <a href="{{ route('home') }}?category={{ $cat->slug }}"
+                            style="background:white; border:1px solid #E5E0D8; border-radius:10px; padding:20px 28px; text-decoration:none; text-align:center; min-width:140px; transition:all 0.2s;"
+                            onmouseover="this.style.borderColor='#D4542A'; this.style.transform='translateY(-2px)'"
+                            onmouseout="this.style.borderColor='#E5E0D8'; this.style.transform='translateY(0)'">
+                            <div style="font-family:'Playfair Display',serif; font-size:16px; color:#1A1814; margin-bottom:4px;">
+                                {{ $cat->name }}
+                            </div>
+                            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#A09890;">
+                                {{ $cat->videos_count }} videos
+                            </div>
+                        </a>
+                    @empty
+                        <div style="max-width:520px; border:1px dashed #D4C4B8; border-radius:16px; background:white; padding:28px 32px; text-align:center;">
+                            <div style="font-family:'Playfair Display',serif; font-size:24px; color:#1A1814; margin-bottom:8px;">Topics will appear here automatically</div>
+                            <div style="font-family:'DM Sans',sans-serif; font-size:15px; color:#6B6560; line-height:1.6;">Create a few categories in your seed data or admin flow and they will become browseable topics on the landing page.</div>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </section>

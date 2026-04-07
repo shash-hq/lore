@@ -1,5 +1,10 @@
 <x-app-layout>
     <div style="max-width:1200px; margin:0 auto; padding:40px 24px;">
+        @if(session('status'))
+            <div style="margin-bottom:20px; border:1px solid #BBF7D0; background:#F0FDF4; color:#166534; border-radius:12px; padding:12px 16px; font-family:'DM Sans',sans-serif; font-size:14px;">
+                {{ session('status') }}
+            </div>
+        @endif
 
         {{-- Greeting --}}
         <div style="margin-bottom:40px;">
@@ -32,9 +37,9 @@
                 <div style="font-size:40px; margin-bottom:16px;">🎬</div>
                 <h3 style="font-family:'Playfair Display',serif; font-size:20px; color:#1A1814; margin:0 0 8px;">Your
                     watchlist is empty</h3>
-                <p style="font-family:'DM Sans',sans-serif; font-size:14px; color:#6B6560; margin:0 0 24px;">Start
-                    saving
-                    videos you love and they'll appear here.</p>
+                <p style="font-family:'DM Sans',sans-serif; font-size:14px; color:#6B6560; margin:0 0 24px;">
+                    Start saving founder stories you want to revisit. Your watchlist will become your personal Lore queue.
+                </p>
                 <a href="{{ route('home') }}"
                     style="background:#D4542A; color:white; padding:10px 24px; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; text-decoration:none;">
                     Browse Videos →
@@ -112,6 +117,15 @@
                 </a>
                 @endforeach
             </div>
+        </div>
+        @else
+        <div style="padding:28px; border:1px dashed #D4C4B8; border-radius:16px; background:#F7F1EA;">
+            <h2 style="font-family:'Playfair Display',serif; font-size:22px; color:#1A1814; margin:0 0 8px;">
+                Nothing new to recommend just yet
+            </h2>
+            <p style="font-family:'DM Sans',sans-serif; font-size:14px; color:#6B6560; margin:0;">
+                Once more published videos land, Lore will surface them here for quick discovery.
+            </p>
         </div>
         @endif
 

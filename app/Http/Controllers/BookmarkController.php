@@ -15,12 +15,13 @@ class BookmarkController extends Controller
         ]);
 
         $user = Auth::user();
-        if (!$user->bookmarkedVideos()->where('video_id', $request->video_id)->exists()) {
-            $user->bookmarkedVideos()->attach($request->video_id);
+        $changes = $user->bookmarkedVideos()->syncWithoutDetaching([$request->video_id]);
+
+        if (!empty($changes['attached'])) {
             return back()->with('status', 'Video bookmarked!');
         }
 
-        return back();
+        return back()->with('status', 'This video is already in your watchlist.');
     }
 
     public function destroy(Video $video)

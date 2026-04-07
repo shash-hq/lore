@@ -17,6 +17,17 @@ class AuthenticationTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_google_sign_in_cta_is_hidden_when_google_auth_is_not_configured(): void
+    {
+        config()->set('services.google.client_id', null);
+        config()->set('services.google.client_secret', null);
+        config()->set('services.google.redirect', null);
+
+        $response = $this->get('/login');
+
+        $response->assertDontSee('Continue with Google');
+    }
+
     public function test_users_can_authenticate_using_the_login_screen(): void
     {
         $user = User::factory()->create();

@@ -87,25 +87,24 @@ class DatabaseSeeder extends Seeder
 
         foreach ($youtubeVideos as $index => $v) {
             $creator = $creators[array_rand($creators)];
-            
-            $video = Video::create([
+
+            $video = Video::updateOrCreate(
+                ['youtube_id' => $v['id']],
+                [
                 'user_id' => $creator->id,
                 'title' => $v['title'],
-                'slug' => Str::slug($v['title'] . '-' . Str::random(5)), // Ensure unique slug
                 'description' => 'A great talk about entrepreneurship, startups, and building products. Highly recommended for founders trying to learn the ropes of building a successful company.',
                 'youtube_id' => $v['id'],
-                'thumbnail_url' => "https://img.youtube.com/vi/{$v['id']}/maxresdefault.jpg",
                 'views' => rand(100, 10000),
-                'is_featured' => ($index === 0), // Set first video as featured
+                'is_featured' => ($index === 0),
                 'is_published' => true,
-            ]);
+                ]
+            );
 
-            // Assign 1 random category
-            $video->categories()->attach($categories->random()->id);
+            $video->categories()->sync([$categories->random()->id]);
 
-            // Assign 2-4 random tags
             $randomTags = $tags->random(rand(2, 4))->pluck('id');
-            $video->tags()->attach($randomTags);
+            $video->tags()->sync($randomTags);
         }
     }
 }

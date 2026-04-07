@@ -24,6 +24,25 @@
                 {{ $videos->total() }} result{{ $videos->total() !== 1 ? 's' : '' }} for <span
                     class="text-[#1A1814] font-medium">'{{ $query }}'</span>
             </div>
+            @elseif(request('category') || request('tag'))
+            <div class="mt-8 text-center text-[#6B6560] font-sans text-[15px]">
+                Browsing {{ $videos->total() }} filtered result{{ $videos->total() !== 1 ? 's' : '' }}
+            </div>
+            @endif
+
+            @if(request('category') || request('tag'))
+                <div class="mt-4 flex flex-wrap items-center justify-center gap-3">
+                    @if(request('category'))
+                        <span class="rounded-full border border-[#E5E0D8] bg-white px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[#6B6560]">
+                            Category: {{ request('category') }}
+                        </span>
+                    @endif
+                    @if(request('tag'))
+                        <span class="rounded-full border border-[#E5E0D8] bg-white px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-[#6B6560]">
+                            Tag: {{ request('tag') }}
+                        </span>
+                    @endif
+                </div>
             @endif
         </div>
 
@@ -39,8 +58,8 @@
             </div>
             <h3 class="font-serif text-2xl text-[#1A1814] mb-3">Nothing here yet</h3>
             <p class="font-sans text-[16px] text-[#6B6560] max-w-md mx-auto">
-                We couldn't find any videos matching your search. Try searching for broader terms like 'fundraising',
-                'growth', or 'pivot'.
+                We couldn't find any videos matching your search or filters. Try broader terms like 'fundraising',
+                'growth', or 'pivot', or clear the category and tag filters.
             </p>
             <a href="/" class="mt-8 text-[#D4542A] hover:underline font-sans font-medium">
                 &larr; Back to all videos

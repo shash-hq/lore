@@ -95,9 +95,8 @@
                             @endforeach
                         </div>
                         @else
-                        <div class="flex gap-3 mt-3 text-[#A09890]">
-                            <a href="#" class="hover:text-[#D4542A] text-sm font-mono">Twitter</a>
-                            <a href="#" class="hover:text-[#D4542A] text-sm font-mono">LinkedIn</a>
+                        <div class="mt-3 text-sm font-sans text-[#A09890]">
+                            No public links added yet.
                         </div>
                         @endif
                     </div>

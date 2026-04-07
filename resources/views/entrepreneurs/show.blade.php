@@ -11,10 +11,18 @@
             </a>
             @endif
 
-            <img src="https://img.youtube.com/vi/{{ $video->youtube_id }}/maxresdefault.jpg"
-     onerror="this.onerror=null; this.src='https://img.youtube.com/vi/{{ $video->youtube_id }}/hqdefault.jpg';"
-     alt="{{ $video->title }}"
-     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+            @if($heroVideo)
+                <div class="mb-8 w-full max-w-4xl overflow-hidden rounded-[24px] border border-[#E5E0D8] shadow-[0_12px_35px_rgba(26,24,20,0.08)]">
+                    <img src="https://img.youtube.com/vi/{{ $heroVideo->youtube_id }}/maxresdefault.jpg"
+                        onerror="this.onerror=null; this.src='https://img.youtube.com/vi/{{ $heroVideo->youtube_id }}/hqdefault.jpg';"
+                        alt="{{ $heroVideo->title }}"
+                        class="h-full w-full object-cover">
+                </div>
+            @else
+                <div class="mb-8 flex h-28 w-28 items-center justify-center rounded-full border border-[#E5E0D8] bg-white text-3xl font-serif text-[#D4542A] shadow-sm">
+                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                </div>
+            @endif
 
             <h1 class="font-serif text-[36px] text-[#1A1814] mb-4">{{ $user->name }}</h1>
 
@@ -64,8 +72,11 @@
 
         <!-- Entrepreneur Videos Grid -->
         @if($videos->isEmpty())
-        <div class="text-center py-12">
-            <p class="font-sans text-[#6B6560]">This creator hasn't published any videos yet.</p>
+        <div class="rounded-[20px] border border-dashed border-[#D4C4B8] bg-[#F7F1EA] px-8 py-14 text-center">
+            <h3 class="font-serif text-2xl text-[#1A1814]">No published stories yet</h3>
+            <p class="mx-auto mt-3 max-w-lg font-sans text-[15px] leading-7 text-[#6B6560]">
+                {{ $user->name }} has not published a video on Lore yet. Check back later for founder stories, lessons, and experiments.
+            </p>
         </div>
         @else
         <div class="columns-1 md:columns-2 lg:columns-3 gap-5 space-y-5">

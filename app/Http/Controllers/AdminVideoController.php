@@ -2,56 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AdminVideoRequest;
+use App\Models\Tag;
 use App\Models\Video;
 use App\Models\Category;
-use Illuminate\Http\Request;
 
 class AdminVideoController extends Controller
 {
     public function index()
     {
-        $videos = Video::with('user', 'categories')
+        $videos = Video::with('user', 'categories', 'tags')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
+
         return view('admin.videos.index', compact('videos'));
     }
 
     public function create()
     {
         $categories = Category::orderBy('name')->get();
-        return view('admin.videos.create', compact('categories'));
+        $tags = Tag::orderBy('name')->get();
+
+        return view('admin.videos.create', compact('categories', 'tags'));
     }
 
-    public function store(Request $request)
+    public function store(AdminVideoRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'youtube_id' => 'required|string', // Removed max:50 to safely accept full URLs before processing
-            'description' => 'required|string',
-            'is_published' => 'boolean',
-        ]);
-
-        // Clean and extract the exact 11-character YouTube ID
-        $youtubeInput = $validated['youtube_id'];
-        preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=|shorts/)|youtu\.be/)([^"&?/\s]{11})%i', $youtubeInput, $match);
-        $cleanYoutubeId = $match[1] ?? $youtubeInput;
-
         $video = Video::create([
             'user_id' => auth()->id(),
-            'title' => $validated['title'],
-            'youtube_id' => $cleanYoutubeId, // Saving the cleaned ID
-            'description' => $validated['description'],
-            'thumbnail_url' => 'https://img.youtube.com/vi/' . $cleanYoutubeId . '/maxresdefault.jpg', // URL will now be perfectly formatted
-            'is_published' => $request->boolean('is_published'),
-            'is_featured' => false,
+            ...$request->validatedVideoAttributes(),
         ]);
 
-        if ($request->has('categories')) {
-            $video->categories()->sync($request->categories);
-        }
+        $video->categories()->sync($request->input('categories', []));
+        $video->tags()->sync($request->input('tags', []));
 
         return redirect()->route('admin.videos.index')
             ->with('success', 'Video added successfully.');
+    }
+
+    public function edit(Video $video)
+    {
+        $categories = Category::orderBy('name')->get();
+        $tags = Tag::orderBy('name')->get();
+
+        return view('admin.videos.edit', compact('video', 'categories', 'tags'));
+    }
+
+    public function update(AdminVideoRequest $request, Video $video)
+    {
+        $video->update($request->validatedVideoAttributes());
+        $video->categories()->sync($request->input('categories', []));
+        $video->tags()->sync($request->input('tags', []));
+
+        return redirect()
+            ->route('admin.videos.index')
+            ->with('success', 'Video updated successfully.');
     }
 
     public function togglePublished(Video $video)

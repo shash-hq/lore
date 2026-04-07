@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute; // Yeh naya import add kiya hai
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Video extends Model
 {
@@ -31,13 +31,34 @@ class Video extends Model
         ];
     }
 
-    protected static function boot()
+    protected static function booted(): void
     {
-        parent::boot();
+        static::creating(function (Video $video) {
+            if (blank($video->slug)) {
+                $video->slug = static::generateUniqueSlug($video->title);
+            }
+        });
 
-        static::creating(function ($video) {
-            if (empty($video->slug)) {
-                $video->slug = Str::slug($video->title);
+        static::updating(function (Video $video) {
+            if (blank($video->slug)) {
+                $video->slug = static::generateUniqueSlug($video->title, $video->id);
+            }
+        });
+
+        static::saving(function (Video $video) {
+            $video->youtube_id = static::normalizeYoutubeId($video->youtube_id) ?? $video->youtube_id;
+
+            if (filled($video->youtube_id)) {
+                $video->thumbnail_url = static::thumbnailUrlFor($video->youtube_id);
+            }
+        });
+
+        static::saved(function (Video $video) {
+            if ($video->is_featured) {
+                static::query()
+                    ->whereKeyNot($video->id)
+                    ->where('is_featured', true)
+                    ->update(['is_featured' => false]);
             }
         });
     }
@@ -65,19 +86,57 @@ class Video extends Model
     protected function youtubeId(): Attribute
     {
         return Attribute::make(
-            get: function ($value) {
-                if (!$value) return null;
-
-                // Agar pehle se hi sirf 11 character ka ID hai, toh wahi return kardo
-                if (strlen($value) === 11) {
-                    return $value;
-                }
-
-                // Agar URL hai, toh Regex use karke usme se ID extract karlo
-                preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/\s]{11})%i', $value, $match);
-
-                return $match[1] ?? $value;
-            }
+            get: fn ($value) => static::normalizeYoutubeId($value) ?? $value,
+            set: fn ($value) => static::normalizeYoutubeId($value) ?? $value,
         );
+    }
+
+    public static function normalizeYoutubeId(?string $value): ?string
+    {
+        if (blank($value)) {
+            return null;
+        }
+
+        $value = trim($value);
+
+        if (preg_match('/^[A-Za-z0-9_-]{11}$/', $value) === 1) {
+            return $value;
+        }
+
+        preg_match(
+            '%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=|shorts/)|youtu\.be/)([^"&?/\s]{11})%i',
+            $value,
+            $match
+        );
+
+        return $match[1] ?? null;
+    }
+
+    public static function thumbnailUrlFor(string $youtubeId): string
+    {
+        return "https://img.youtube.com/vi/{$youtubeId}/maxresdefault.jpg";
+    }
+
+    protected static function generateUniqueSlug(string $title, ?int $ignoreId = null): string
+    {
+        $baseSlug = Str::slug($title);
+        $baseSlug = $baseSlug !== '' ? $baseSlug : 'video';
+        $slug = $baseSlug;
+        $suffix = 2;
+
+        while (static::slugExists($slug, $ignoreId)) {
+            $slug = "{$baseSlug}-{$suffix}";
+            $suffix++;
+        }
+
+        return $slug;
+    }
+
+    protected static function slugExists(string $slug, ?int $ignoreId = null): bool
+    {
+        return static::query()
+            ->where('slug', $slug)
+            ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
+            ->exists();
     }
 }
